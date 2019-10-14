@@ -7,7 +7,7 @@ REMOTE=lowrisc5.sm
 LINUX=linux-5.1.3-lowrisc
 MD5SERIAL=$(shell md5sum riscv-pk/serial/bbl | cut -d\  -f1)
 MD5VT=$(shell md5sum riscv-pk/vt/bbl | cut -d\  -f1)
-export RISCV=/opt/riscv
+export RISCV=/opt/RISCV
 
 default: nexys4_ddr_ariane
 
@@ -95,11 +95,17 @@ nexys_video_ariane: riscv-pk/serial/bbl
 nexys_video_rocket: riscv-pk/serial/bbl
 	make fpga/work-fpga/nexys4_video_rocket/rocket_xilinx.bit BOARD="nexys_video" CPU="rocket" BITSIZE=0x800000 XILINX_PART="xc7a200tsbg484-1" XILINX_BOARD="digilentinc.com:nexys_video:part0:1.1" COMPATIBLE="sifive,rocket0" BBL=$(root-dir)$< |& tee nexys_video_rocket.log
 
-genesys2_ariane: riscv-pk/serial/bbl
+#genesys2_ariane: riscv-pk/serial/bbl
+#	make fpga/work-fpga/genesys2_ariane/ariane_xilinx.bit BOARD="genesys2" CPU="ariane" BITSIZE=0xB00000 XILINX_PART="xc7k325tffg900-2" XILINX_BOARD="digilentinc.com:genesys2:part0:1.1" COMPATIBLE="ethz, ariane" BBL=$(root-dir)$< |& tee genesys2_ariane.log
+
+genesys2_ariane:
 	make fpga/work-fpga/genesys2_ariane/ariane_xilinx.bit BOARD="genesys2" CPU="ariane" BITSIZE=0xB00000 XILINX_PART="xc7k325tffg900-2" XILINX_BOARD="digilentinc.com:genesys2:part0:1.1" COMPATIBLE="ethz, ariane" BBL=$(root-dir)$< |& tee genesys2_ariane.log
 
 genesys2_rocket: riscv-pk/serial/bbl
 	make fpga/work-fpga/genesys2_rocket/rocket_xilinx.bit BOARD="genesys2" CPU="rocket" BITSIZE=0xB00000 XILINX_PART="xc7k325tffg900-2" XILINX_BOARD="digilentinc.com:genesys2:part0:1.1" COMPATIBLE="sifive,rocket0" BBL=$(root-dir)$< |& tee genesys2_rocket.log
+
+kc705_ariane:
+	make fpga/work-fpga/kc705_ariane/ariane_xilinx.bit BOARD="kc705" CPU="ariane" BITSIZE=0xB00000 XILINX_PART="xc7k325tffg900-2" XILINX_BOARD="xilinx.com:kc705:part0:1.5" COMPATIBLE="ethz, ariane" BBL=$(root-dir)$< | tee kc705_ariane.log
 
 $(rocket_src): rocket-chip/vsim/Makefile
 	make -C rocket-chip/vsim verilog

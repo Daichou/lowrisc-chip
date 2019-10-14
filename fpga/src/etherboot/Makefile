@@ -34,7 +34,7 @@ $(MAIN): $(OBJS_C) src/main.c $(OBJS_S) linker.lds
 
 $(BOARD)_$(CPU).o: ../$(BOARD).dts
 	sed -e "s/\(compatible = \"\)\(\"\)/\1$(COMPATIBLE)\2/" $< | dtc -I dts -O dtb -o $(BOARD)_$(CPU).dtb
-	echo -e .section .dtb \; .align 4,0 \; .globl _dtb \; _dtb: \; .incbin \"$(BOARD)_$(CPU).dtb\" | $(CC) $(CFLAGS) -c -xassembler - -o $@
+	/bin/echo -e .section .dtb \; .align 4,0 \; .globl _dtb \; _dtb: \; .incbin \"$(BOARD)_$(CPU).dtb\" | $(CC) $(CFLAGS) -c -xassembler - -o $@
 
 %.img: %.bin
 	dd if=$< of=$@ bs=128
