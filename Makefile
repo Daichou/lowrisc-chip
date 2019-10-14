@@ -105,7 +105,7 @@ genesys2_rocket: riscv-pk/serial/bbl
 	make fpga/work-fpga/genesys2_rocket/rocket_xilinx.bit BOARD="genesys2" CPU="rocket" BITSIZE=0xB00000 XILINX_PART="xc7k325tffg900-2" XILINX_BOARD="digilentinc.com:genesys2:part0:1.1" COMPATIBLE="sifive,rocket0" BBL=$(root-dir)$< |& tee genesys2_rocket.log
 
 kc705_ariane:
-	make fpga/work-fpga/kc705_ariane/ariane_xilinx.bit BOARD="kc705" CPU="ariane" BITSIZE=0xB00000 XILINX_PART="xc7k325tffg900-2" XILINX_BOARD="xilinx.com:kc705:part0:1.5" COMPATIBLE="ethz, ariane" BBL=$(root-dir)$< | tee kc705_ariane.log
+	make fpga/work-fpga/kc705_ariane/ariane_xilinx.bit BOARD="kc705" CPU="ariane" BITSIZE=0xB00000 XILINX_PART="xc7k325tffg900-2" XILINX_BOARD="xilinx.com:kc705:part0:1.5" COMPATIBLE="ethz, ariane" BBL=$(root-dir)$< 2>&1 | tee kc705_ariane.log
 
 $(rocket_src): rocket-chip/vsim/Makefile
 	make -C rocket-chip/vsim verilog

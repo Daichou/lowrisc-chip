@@ -89,6 +89,25 @@ boom_xilinx
   output logic        ddr3_cke    ,
   output logic  [1:0] ddr3_dm     ,
   output logic        ddr3_odt    ,
+`elsif KC705
+  input  logic         sys_clk_p   ,
+  input  logic         sys_clk_n   ,
+  input  logic         cpu_resetn  ,
+  inout  wire  [31:0]  ddr3_dq     ,
+  inout  wire  [ 3:0]  ddr3_dqs_n  ,
+  inout  wire  [ 3:0]  ddr3_dqs_p  ,
+  output logic [14:0]  ddr3_addr   ,
+  output logic [ 2:0]  ddr3_ba     ,
+  output logic         ddr3_ras_n  ,
+  output logic         ddr3_cas_n  ,
+  output logic         ddr3_we_n   ,
+  output logic         ddr3_reset_n,
+  output logic [ 0:0]  ddr3_ck_p   ,
+  output logic [ 0:0]  ddr3_ck_n   ,
+  output logic [ 0:0]  ddr3_cke    ,
+  output logic [ 0:0]  ddr3_cs_n   ,
+  output logic [ 3:0]  ddr3_dm     ,
+  output logic [ 0:0]  ddr3_odt    ,
 `endif
 `ifdef RGMII
   output wire          eth_rst_n   ,
@@ -244,6 +263,10 @@ AXI_BUS #(
  `define CLOCK_CONVERTER
 `endif
 
+`ifdef KC705
+ `define CLOCK_CONVERTER
+`endif
+
 `ifdef NEXYS_VIDEO
  `define CLOCK_CONVERTER
 `endif
@@ -378,6 +401,76 @@ xlnx_axi_clock_converter i_xlnx_axi_clock_converter_ddr (
 
 `ifdef GENESYSII
 xlnx_mig_7_ddr_genesys2 i_ddr (
+    .sys_clk_p,
+    .sys_clk_n,
+    .sys_rst         ( cpu_resetn    ),
+    .ddr3_dq,
+    .ddr3_dqs_n,
+    .ddr3_dqs_p,
+    .ddr3_addr,
+    .ddr3_ba,
+    .ddr3_ras_n,
+    .ddr3_cas_n,
+    .ddr3_we_n,
+    .ddr3_reset_n,
+    .ddr3_ck_p,
+    .ddr3_ck_n,
+    .ddr3_cke,
+    .ddr3_cs_n,
+    .ddr3_dm,
+    .ddr3_odt,
+    .mmcm_locked     (                ), // keep open
+    .app_sr_req      ( '0             ),
+    .app_ref_req     ( '0             ),
+    .app_zq_req      ( '0             ),
+    .app_sr_active   (                ), // keep open
+    .app_ref_ack     (                ), // keep open
+    .app_zq_ack      (                ), // keep open
+    .ui_clk          ( mig_ui_clk     ),
+    .ui_clk_sync_rst ( mig_ui_rst     ),
+    .aresetn         ( rst_n          ),
+    .s_axi_awid,
+    .s_axi_awaddr    ( s_axi_awaddr[29:0] ),
+    .s_axi_awlen,
+    .s_axi_awsize,
+    .s_axi_awburst,
+    .s_axi_awlock,
+    .s_axi_awcache,
+    .s_axi_awprot,
+    .s_axi_awqos,
+    .s_axi_awvalid,
+    .s_axi_awready,
+    .s_axi_wdata,
+    .s_axi_wstrb,
+    .s_axi_wlast,
+    .s_axi_wvalid,
+    .s_axi_wready,
+    .s_axi_bready,
+    .s_axi_bid,
+    .s_axi_bresp,
+    .s_axi_bvalid,
+    .s_axi_arid,
+    .s_axi_araddr     ( s_axi_araddr[29:0] ),
+    .s_axi_arlen,
+    .s_axi_arsize,
+    .s_axi_arburst,
+    .s_axi_arlock,
+    .s_axi_arcache,
+    .s_axi_arprot,
+    .s_axi_arqos,
+    .s_axi_arvalid,
+    .s_axi_arready,
+    .s_axi_rready,
+    .s_axi_rid,
+    .s_axi_rdata,
+    .s_axi_rresp,
+    .s_axi_rlast,
+    .s_axi_rvalid,
+    .init_calib_complete (            ), // keep open
+    .device_temp         (            )  // keep open
+);
+`elsif KC705
+xlnx_mig_7_ddr_kc705 i_ddr (
     .sys_clk_p,
     .sys_clk_n,
     .sys_rst         ( cpu_resetn    ),
@@ -683,24 +776,14 @@ ariane_peripherals_xilinx #(
     .o_etx_en, // RMII transmit enable
     .o_erstn, // PHY reset active low
 `endif                        
-    .eth_mdio, // PHY control
-    .eth_mdc,                        
-    .sd_sclk, // SD-Card
-    .sd_detect,
-    .sd_dat,
-    .sd_cmd,
-    .sd_reset,
-    .leds_o         ( led             ),
-    .dip_switches_i ( sw              ),
-    .QSPI_CSN, // Quad-SPI (for MAC address)
-    .QSPI_D,
-    .pxl_clk(clk_pixel),
     // keyboard
+`ifndef KC705
     .PS2_CLK,
     .PS2_DATA,
     // mouse
     .PS2_MCLK,
     .PS2_MDATA,
+`endif
 `ifdef NEXYS4DDR
     .CA,
     .CB,
@@ -713,11 +796,25 @@ ariane_peripherals_xilinx #(
     .AN,
 `endif //  `ifdef NEXYS4DDR
     // display
+`ifndef KC705
     .VGA_HS_O,
     .VGA_VS_O,
     .VGA_RED_O,
     .VGA_BLUE_O,
     .VGA_GREEN_O
+`endif
+    .eth_mdio, // PHY control
+    .eth_mdc,                        
+    .sd_sclk, // SD-Card
+    .sd_detect,
+    .sd_dat,
+    .sd_cmd,
+    .sd_reset,
+    .leds_o         ( led             ),
+    .dip_switches_i ( sw              ),
+    .QSPI_CSN, // Quad-SPI (for MAC address)
+    .QSPI_D,
+    .pxl_clk(clk_pixel)
 );
 
 

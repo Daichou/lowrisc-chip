@@ -84,7 +84,9 @@ module ariane_peripherals_xilinx #(
     output wire        CG,
     output wire        DP,
     output wire [7:0]  AN,
+`elsif KC705 
 `endif
+`ifndef KC705
 `ifndef NEXYS_VIDEO
   // keyboard
     inout wire         PS2_CLK     ,
@@ -95,7 +97,8 @@ module ariane_peripherals_xilinx #(
   // display
     output wire        VGA_HS_O    ,
     output wire        VGA_VS_O    ,
-`endif
+`endif //NEXYS_VIDEO
+`endif //KC705
   // Quad-SPI
     inout wire         QSPI_CSN,
     inout wire [3:0]   QSPI_D   
@@ -645,6 +648,7 @@ axi_bram_ctrl #(
     .bram_rddata ( hid_rddata              )
 );
 
+`ifndef KC705
 `ifndef NEXYS_VIDEO
 
 hid_soc hid1
@@ -683,6 +687,7 @@ hid_soc hid1
  .VGA_GREEN_O
    );
 
+`endif
 `endif
   
 endmodule
