@@ -41,6 +41,27 @@ module xilinx_tb;
     logic [ 0:0]  ddr3_odt    ;
     assign sys_clk_p = clk;
     assign sys_clk_n = ~clk;   
+`elsif KC705
+    localparam int unsigned CLOCK_PERIOD = 5ns;
+    logic         sys_clk_p   ;
+    logic         sys_clk_n   ;
+    wire  [63:0]  ddr3_dq     ;
+    wire  [ 7:0]  ddr3_dqs_n  ;
+    wire  [ 7:0]  ddr3_dqs_p  ;
+    logic [13:0]  ddr3_addr   ;
+    logic [ 2:0]  ddr3_ba     ;
+    logic         ddr3_ras_n  ;
+    logic         ddr3_cas_n  ;
+    logic         ddr3_we_n   ;
+    logic         ddr3_reset_n;
+    logic [ 0:0]  ddr3_ck_p   ;
+    logic [ 0:0]  ddr3_ck_n   ;
+    logic [ 0:0]  ddr3_cke    ;
+    logic [ 0:0]  ddr3_cs_n   ;
+    logic [ 7:0]  ddr3_dm     ;
+    logic [ 0:0]  ddr3_odt    ;
+    assign sys_clk_p = clk;
+    assign sys_clk_n = ~clk;   
 `elsif NEXYS4DDR
     localparam int unsigned CLOCK_PERIOD = 10ns;
     logic        clk_p       ;

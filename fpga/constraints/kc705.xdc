@@ -3,7 +3,7 @@
 ############################################################################
 
 # Set calibration configuration for KC705 SODIMM
-set_property DCI_CASCADE {32 34} [get_iobanks 33]
+set_property slave_banks {32 34} [get_iobanks 33]
 # alterantive method: set_property slave_banks {32 34} [get_iobanks 33]
 
 # Buttons
@@ -58,8 +58,8 @@ set_property -dict {PACKAGE_PIN U28 IOSTANDARD LVCMOS25} [get_ports { eth_rxd[3]
 set_property -dict {PACKAGE_PIN R23 IOSTANDARD LVCMOS25} [get_ports { eth_mdc }]; #IO_L23P_T3_33 Sch=eth_mdc
 set_property -dict {PACKAGE_PIN J21 IOSTANDARD LVCMOS25} [get_ports { eth_mdio }]; #IO_L23N_T3_33 Sch=eth_mdio
 
-set_property -dict {PACKAGE_PIN AK15  IOSTANDARD LVCMOS18} [get_ports { eth_pme_b }]; #IO_L1N_T0_32 Sch=eth_pmeb
-set_property -dict {PACKAGE_PIN AK16  IOSTANDARD LVCMOS18} [get_ports { eth_int_b }]; #IO_L1P_T0_32 Sch=eth_intb
+#set_property -dict {PACKAGE_PIN AK15  IOSTANDARD LVCMOS18} [get_ports { eth_pme_b }]; #IO_L1N_T0_32 Sch=eth_pmeb
+#set_property -dict {PACKAGE_PIN AK16  IOSTANDARD LVCMOS18} [get_ports { eth_int_b }]; #IO_L1P_T0_32 Sch=eth_intb
 
 #############################################
 # Ethernet Constraints for 1Gb/s
@@ -73,10 +73,10 @@ set_clock_groups -asynchronous -group [get_clocks clk_out2_xlnx_clk_gen]
 #############################################
 ## SD Card
 #############################################
-set_property -dict {PACKAGE_PIN AB23 IOSTANDARD LVCMOS25} [get_ports spi_clk_o];
-set_property -dict {PACKAGE_PIN AC21 IOSTANDARD LVCMOS25} [get_ports spi_ss];
-set_property -dict {PACKAGE_PIN AC20 IOSTANDARD LVCMOS25} [get_ports spi_miso];
-set_property -dict {PACKAGE_PIN AB22 IOSTANDARD LVCMOS25} [get_ports spi_mosi];
+#set_property -dict {PACKAGE_PIN AB23 IOSTANDARD LVCMOS25} [get_ports spi_clk_o];
+#set_property -dict {PACKAGE_PIN AC21 IOSTANDARD LVCMOS25} [get_ports spi_ss];
+#set_property -dict {PACKAGE_PIN AC20 IOSTANDARD LVCMOS25} [get_ports spi_miso];
+#set_property -dict {PACKAGE_PIN AB22 IOSTANDARD LVCMOS25} [get_ports spi_mosi];
 set_property -dict { PACKAGE_PIN P28   IOSTANDARD LVCMOS33 } [get_ports { sd_cd }]; #IO_L8N_T1_D12_14 Sch=sd_cd
 set_property -dict { PACKAGE_PIN R29   IOSTANDARD LVCMOS33 } [get_ports { sd_cmd }]; #IO_L7N_T1_D10_14 Sch=sd_cmd
 set_property -dict { PACKAGE_PIN R26   IOSTANDARD LVCMOS33 } [get_ports { sd_dat[0] }]; #IO_L10N_T1_D15_14 Sch=sd_dat[0]
@@ -119,7 +119,12 @@ set_property -dict { PACKAGE_PIN R28   IOSTANDARD LVCMOS33 } [get_ports { sd_clk
 #set_property -dict { PACKAGE_PIN AE20  IOSTANDARD LVCMOS33  PULLUP true } [get_ports { PS2_DATA }]; #IO_25_12 Sch=ps2_data[0]
 
 
-# Genesys 2 has a quad SPI flash
+# kc705 has a quad SPI flash
+set_property -dict { PACKAGE_PIN U19 IOSTANDARD LVCMOS25 } [get_ports { QSPI_CSN }]; #IO_L6P_T0_FCS_B_14 Sch=qspi_csn
+set_property -dict { PACKAGE_PIN P24 IOSTANDARD LVCMOS25 } [get_ports { QSPI_D[0] }]; #IO_L1P_T0_D00_MOSI_14 Sch=qspi_d[0]
+set_property -dict { PACKAGE_PIN R25 IOSTANDARD LVCMOS25 } [get_ports { QSPI_D[1] }]; #IO_L1N_T0_D01_DIN_14 Sch=qspi_d[1]
+set_property -dict { PACKAGE_PIN R20 IOSTANDARD LVCMOS25 } [get_ports { QSPI_D[2] }]; #IO_L2P_T0_D02_14 Sch=qspi_d[2]
+set_property -dict { PACKAGE_PIN R21 IOSTANDARD LVCMOS25 } [get_ports { QSPI_D[3] }]; #IO_L2N_T0_D03_14 Sch=qspi_d[3]
 set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
 
 ## JTAG
@@ -132,7 +137,7 @@ set_max_delay -from [get_ports { trst_n } ] 20
 
 # reset signal
 set_false_path -from [get_ports { trst_n } ]
-#set_false_path -from [get_pins i_ddr/u_xlnx_mig_7_ddr3_mig/u_ddr3_infrastructure/rstdiv0_sync_r1_reg_rep/C]
+set_false_path -from [get_pins i_ddr/u_xlnx_mig_7_ddr3_mig/u_ddr3_infrastructure/rstdiv0_sync_r1_reg_rep/C]
 
 set_property ALLOW_COMBINATORIAL_LOOPS true [get_nets {i_ariane_peripherals/gen_gpio.rng/x0[1]}]
 set_disable_timing -from I -to O \i_ariane_peripherals/gen_gpio.rng/gio[0].bufx0_inst

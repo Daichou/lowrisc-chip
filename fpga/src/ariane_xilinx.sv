@@ -93,10 +93,10 @@ boom_xilinx
   input  logic         sys_clk_p   ,
   input  logic         sys_clk_n   ,
   input  logic         cpu_resetn  ,
-  inout  wire  [31:0]  ddr3_dq     ,
-  inout  wire  [ 3:0]  ddr3_dqs_n  ,
-  inout  wire  [ 3:0]  ddr3_dqs_p  ,
-  output logic [14:0]  ddr3_addr   ,
+  inout  wire  [63:0]  ddr3_dq     ,
+  inout  wire  [ 7:0]  ddr3_dqs_n  ,
+  inout  wire  [ 7:0]  ddr3_dqs_p  ,
+  output logic [13:0]  ddr3_addr   ,
   output logic [ 2:0]  ddr3_ba     ,
   output logic         ddr3_ras_n  ,
   output logic         ddr3_cas_n  ,
@@ -106,7 +106,7 @@ boom_xilinx
   output logic [ 0:0]  ddr3_ck_n   ,
   output logic [ 0:0]  ddr3_cke    ,
   output logic [ 0:0]  ddr3_cs_n   ,
-  output logic [ 3:0]  ddr3_dm     ,
+  output logic [ 7:0]  ddr3_dm     ,
   output logic [ 0:0]  ddr3_odt    ,
 `endif
 `ifdef RGMII
@@ -190,6 +190,21 @@ IOBUF #(
 `ifdef GENESYSII
 
 xlnx_clk_genesys2 i_xlnx_clk_gen (
+  .clk_out1 ( clk            ), // 50 MHz
+  .clk_out2 ( phy_tx_clk     ), // 125 MHz (for RGMII PHY)
+  .clk_out3 ( eth_clk        ), // 125 MHz quadrature (90 deg phase shift)
+  .clk_out4 ( sd_clk_sys     ), // 50 MHz clock
+  .clk_out5 ( clk_pixel      ), // 120 MHz clock
+  .resetn   ( cpu_resetn     ),
+  .locked   ( pll_locked     ),
+  .clk_in1  ( mig_ui_clk     )
+);
+
+assign mig_sys_clk = mig_ui_clk;
+   
+`elsif KC705
+
+xlnx_clk_kc705 i_xlnx_clk_gen (
   .clk_out1 ( clk            ), // 50 MHz
   .clk_out2 ( phy_tx_clk     ), // 125 MHz (for RGMII PHY)
   .clk_out3 ( eth_clk        ), // 125 MHz quadrature (90 deg phase shift)

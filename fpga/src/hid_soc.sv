@@ -31,6 +31,7 @@ module hid_soc
    output wire        CG,
    output wire        DP,
    output wire [7:0]  AN,
+`elsif KC705 
 `endif
   // keyboard
     inout wire         PS2_CLK     ,
