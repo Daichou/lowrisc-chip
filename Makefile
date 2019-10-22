@@ -40,15 +40,15 @@ riscv-pk/vt/bbl: $(LINUX)/drivers/net/ethernet/Makefile $(LINUX)/initramfs.cpio 
 	make -C riscv-pk/vt PATH=$(RISCV)/bin:/usr/bin:/bin
 
 riscv-pk/vt/vmlinux-vt: riscv-pk/vt/Makefile $(LINUX)/.config
-	make -C $(LINUX) ARCH=riscv CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-elf- CONFIG_SERIAL_8250_CONSOLE=n CONFIG_VT_CONSOLE=y CONFIG_LOWRISC_VGA_CONSOLE=y -j 4
+	make -C $(LINUX) ARCH=riscv CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-linux-gnu- CONFIG_SERIAL_8250_CONSOLE=n CONFIG_VT_CONSOLE=y CONFIG_LOWRISC_VGA_CONSOLE=y -j 4
 	mv $(LINUX)/vmlinux $@
 
 riscv-pk/serial/vmlinux-serial: riscv-pk/serial/Makefile $(LINUX)/.config
-	make -C $(LINUX) ARCH=riscv CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-elf- CONFIG_SERIAL_8250_CONSOLE=y CONFIG_VT_CONSOLE=n CONFIG_LOWRISC_VGA_CONSOLE=n -j 4
+	make -C $(LINUX) ARCH=riscv CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-linux-gnu- CONFIG_SERIAL_8250_CONSOLE=y CONFIG_VT_CONSOLE=n CONFIG_LOWRISC_VGA_CONSOLE=n -j 4
 	mv $(LINUX)/vmlinux $@
 
 $(LINUX)/.config: $(LINUX)/arch/riscv/configs/defconfig
-	make -C $(LINUX) defconfig ARCH=riscv CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-elf-
+	make -C $(LINUX) defconfig ARCH=riscv CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-linux-gnu-
 
 $(LINUX)/initramfs.cpio:
 	make -C debian-riscv64 cpio
@@ -104,7 +104,7 @@ genesys2_ariane:
 genesys2_rocket: riscv-pk/serial/bbl
 	make fpga/work-fpga/genesys2_rocket/rocket_xilinx.bit BOARD="genesys2" CPU="rocket" BITSIZE=0xB00000 XILINX_PART="xc7k325tffg900-2" XILINX_BOARD="digilentinc.com:genesys2:part0:1.1" COMPATIBLE="sifive,rocket0" BBL=$(root-dir)$< |& tee genesys2_rocket.log
 
-kc705_ariane:
+kc705_ariane: riscv-pk/serial/bbl
 	make fpga/work-fpga/kc705_ariane/ariane_xilinx.bit BOARD="kc705" CPU="ariane" BITSIZE=0xB00000 XILINX_PART="xc7k325tffg900-2" XILINX_BOARD="xilinx.com:kc705:part0:1.5" COMPATIBLE="ethz, ariane" BBL=$(root-dir)$< 2>&1 | tee kc705_ariane.log
 
 $(rocket_src): rocket-chip/vsim/Makefile
